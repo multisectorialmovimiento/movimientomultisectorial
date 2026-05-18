@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movimiento Multisectorial — Caja del Arte de Curar · Santa Fe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,900&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   RESET & VARIABLES
+════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --azul:   #002B5B;
+  --coral:  #FF6B4A;
+  --beige:  #E8DFC8;
+  --negro:  #0E0E0E;
+  --blanco: #F8F6F1;
+  --azul-medio: #00408A;
+  --coral-dark: #e85535;
+  --t: 'Barlow Condensed', sans-serif;
+  --b: 'Barlow', sans-serif;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
+body {
+  font-family: var(--b);
+  background: var(--blanco);
+  color: var(--negro);
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--azul); }
+::-webkit-scrollbar-thumb { background: var(--coral); border-radius: 2px; }
+
+/* ════════════════════════════════════════
+   CURSOR CUSTOM (desktop only)
+════════════════════════════════════════ */
+@media (pointer: fine) {
+  body { cursor: none; }
+  #cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    background: var(--coral);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: width .25s var(--ease-out), height .25s var(--ease-out);
+    will-change: top, left;
+  }
+  #cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(255,107,74,0.45);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    will-change: top, left;
+    transition: width .35s var(--ease-out), height .35s var(--ease-out);
+  }
+  a:hover ~ #cursor, button:hover ~ #cursor { width: 6px; height: 6px; }
+}
+
+/* ════════════════════════════════════════
+   PROGRESS BAR
+════════════════════════════════════════ */
+#progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--coral);
+  z-index: 600;
+  width: 0%;
+  transition: width .1s linear;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════
+   NAVBAR
+════════════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 52px;
+  background: rgba(0,22,50,0.92);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,107,74,0.12);
+  transition: padding .4s var(--ease-out), background .3s;
+}
+nav.scrolled { padding: 13px 52px; background: rgba(0,14,38,0.98); }
+
+.nav-logo {
+  font-family: var(--t);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--beige);
+  text-transform: uppercase;
+  line-height: 1.15;
+  text-decoration: none;
+  display: block;
+}
+.nav-logo span { color: var(--coral); display: block; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--b);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.55);
+  text-decoration: none;
+  position: relative;
+  transition: color .25s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--coral);
+  transition: width .3s var(--ease-out);
+}
+.nav-links a:hover { color: var(--beige); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  background: var(--coral) !important;
+  color: #fff !important;
+  padding: 10px 24px !important;
+  border-radius: 2px;
+  letter-spacing: 0.12em !important;
+  transition: background .2s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--coral-dark) !important; color: #fff !important; }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  background: none;
+  border: none;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--beige);
+  transition: transform .35s var(--ease-out), opacity .25s;
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile overlay nav */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--azul);
+  z-index: 490;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
+  pointer-events: none;
+}
+.mobile-nav.open { opacity: 1; transform: translateY(0); pointer-events: all; }
+.mobile-nav a {
+  font-family: var(--t);
+  font-size: clamp(2.4rem, 8vw, 4.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--beige);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  width: 80%;
+  text-align: center;
+  transition: color .2s;
+}
+.mobile-nav a:hover { color: var(--coral); }
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+#inicio {
+  min-height: 100svh;
+  background: var(--azul);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,107,74,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,107,74,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: gridDrift 24s linear infinite;
+  pointer-events: none;
+}
+@keyframes gridDrift {
+  0% { background-position: 0 0; }
+  100% { background-position: 64px 64px; }
+}
+
+.hero-ghost {
+  position: absolute;
+  bottom: -8%;
+  right: -2%;
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(100px, 22vw, 360px);
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.035);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  animation: ghostFloat 9s ease-in-out infinite;
+}
+@keyframes ghostFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+}
+
+.hero-vline {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: clamp(200px, 33vw, 540px);
+  width: 1px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(255,107,74,0.18) 25%, rgba(255,107,74,0.18) 75%, transparent 100%);
+}
+
+.hero-side {
+  position: absolute;
+  top: 50%;
+  right: 28px;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.18);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hero-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 128px 52px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--coral);
+  font-weight: 600;
+  margin-bottom: 26px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp .7s var(--ease-out) .2s forwards;
+}
+
+.hero-title {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(44px, 12vw, 172px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--beige);
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line span { display: block; opacity: 0; transform: translateY(105%); }
+.hero-title .line:nth-child(1) span { animation: lineUp .85s var(--ease-out) .35s forwards; }
+.hero-title .line:nth-child(2) span { animation: lineUp .85s var(--ease-out) .5s forwards; }
+.hero-title .line:nth-child(3) span { animation: lineUp .85s var(--ease-out) .65s forwards; }
+.hero-title .line:nth-child(4) span { animation: lineUp .85s var(--ease-out) .8s forwards; }
+.currar { color: var(--coral); }
+
+.hero-sub {
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  color: rgba(232,223,200,0.6);
+  font-weight: 300;
+  max-width: 420px;
+  line-height: 1.65;
+  margin-bottom: 36px;
+  font-style: italic;
+  opacity: 0;
+  animation: fadeUp .7s var(--ease-out) .9s forwards;
+}
+
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fadeUp .7s var(--ease-out) 1.05s forwards;
+}
+.hero-tag {
+  font-size: 0.63rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(232,223,200,0.8);
+  border: 1px solid rgba(255,107,74,0.35);
+  padding: 7px 15px;
+  border-radius: 1px;
+  transition: background .25s, border-color .25s, color .25s;
+  cursor: default;
+}
+.hero-tag:hover { background: var(--coral); border-color: var(--coral); color: #fff; }
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp .7s var(--ease-out) 1.2s forwards;
+}
+
+.btn-primary {
+  display: inline-block;
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--azul);
+  background: var(--beige);
+  padding: 17px 44px;
+  text-decoration: none;
+  border-radius: 2px;
+  border: 2px solid var(--beige);
+  position: relative;
+  overflow: hidden;
+  transition: color .3s, border-color .3s, transform .2s var(--ease-out);
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--coral);
+  transform: translateX(-101%);
+  transition: transform .38s var(--ease-out);
+}
+.btn-primary .btn-txt { position: relative; z-index: 1; }
+.btn-primary:hover { color: #fff; border-color: var(--coral); transform: translateY(-2px); }
+.btn-primary:hover::before { transform: translateX(0); }
+
+.btn-ghost {
+  display: inline-block;
+  font-family: var(--t);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.6);
+  padding: 17px 36px;
+  text-decoration: none;
+  border-radius: 2px;
+  border: 2px solid rgba(232,223,200,0.18);
+  transition: color .25s, border-color .25s, transform .2s;
+}
+.btn-ghost:hover { color: var(--beige); border-color: rgba(232,223,200,0.55); transform: translateY(-2px); }
+
+.hero-bar {
+  background: rgba(0,0,0,0.22);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 14px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeUp .5s var(--ease-out) 1.4s forwards;
+}
+.hero-bar-txt {
+  font-size: 0.63rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.25);
+  font-weight: 600;
+}
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.25);
+  font-weight: 600;
+}
+.scroll-arrow {
+  width: 18px; height: 18px;
+  border-right: 1px solid rgba(232,223,200,0.25);
+  border-bottom: 1px solid rgba(232,223,200,0.25);
+  transform: rotate(45deg);
+  animation: arrowBounce 2s ease-in-out infinite;
+}
+@keyframes arrowBounce {
+  0%,100% { transform: rotate(45deg) translateY(0); opacity: .25; }
+  50% { transform: rotate(45deg) translateY(5px); opacity: .6; }
+}
+
+/* ════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════ */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes lineUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════
+   MARQUEE
+════════════════════════════════════════ */
+.marquee-wrap {
+  background: var(--coral);
+  padding: 13px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex;
+  animation: marquee 24s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 0.76rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--azul);
+  padding: 0 36px;
+}
+.marquee-track .sep {
+  color: rgba(0,43,91,0.35);
+  padding: 0 4px;
+  letter-spacing: 0;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ════════════════════════════════════════
+   REVEAL
+════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .75s var(--ease-out), transform .75s var(--ease-out);
+}
+.reveal.left  { transform: translateX(-30px); }
+.reveal.right { transform: translateX(30px); }
+.reveal.visible { opacity: 1; transform: translate(0,0); }
+
+/* ════════════════════════════════════════
+   SECTION BASE
+════════════════════════════════════════ */
+section { padding: 108px 52px; }
+
+.s-label {
+  font-size: 0.64rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--coral);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.s-label::before { content: ''; width: 22px; height: 1px; background: var(--coral); flex-shrink: 0; }
+
+.s-title {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(38px, 5.5vw, 82px);
+  line-height: 0.94;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.s-rule { width: 40px; height: 3px; background: var(--coral); margin-bottom: 52px; }
+
+/* ════════════════════════════════════════
+   PROBLEMAS
+════════════════════════════════════════ */
+#problemas {
+  background: var(--azul);
+  color: var(--beige);
+  position: relative;
+  overflow: hidden;
+}
+#problemas::after {
+  content: 'CAMBIO';
+  position: absolute;
+  right: -2%; bottom: -10%;
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(80px, 16vw, 240px);
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.035);
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+#problemas .s-title { color: var(--beige); }
+
+.prob-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+@media (max-width: 900px) { .prob-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 540px) { .prob-grid { grid-template-columns: 1fr; } }
+
+.prob-card {
+  padding: 48px 34px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+@media (max-width: 900px) { .prob-card:nth-child(2n) { border-right: none; } }
+@media (max-width: 540px) { .prob-card { border-right: none; } }
+.prob-card:last-child { border-right: none; }
+.prob-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px; width: 0;
+  background: var(--coral);
+  transition: width .45s var(--ease-out);
+}
+.prob-card:hover { background: rgba(255,107,74,0.04); }
+.prob-card:hover::after { width: 100%; }
+
+.prob-num {
+  position: absolute;
+  top: 20px; right: 22px;
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.07);
+}
+.prob-icon { width: 40px; height: 40px; margin-bottom: 26px; opacity: 0.5; transition: opacity .3s; }
+.prob-card:hover .prob-icon { opacity: 0.9; }
+.prob-title {
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--beige);
+  margin-bottom: 12px;
+  line-height: 1.1;
+}
+.prob-desc { font-size: 0.85rem; line-height: 1.72; color: rgba(232,223,200,0.42); }
+
+/* ════════════════════════════════════════
+   QUIÉNES SOMOS
+════════════════════════════════════════ */
+#quienes { background: var(--beige); }
+#quienes .s-title { color: var(--azul); }
+
+.quienes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 96px;
+  align-items: start;
+}
+@media (max-width: 860px) { .quienes-grid { grid-template-columns: 1fr; gap: 56px; } }
+
+.quienes-body p {
+  font-size: 0.96rem;
+  line-height: 1.85;
+  color: rgba(14,14,14,0.65);
+  margin-bottom: 18px;
+}
+.quienes-body p.lead {
+  font-size: 1.08rem;
+  font-weight: 500;
+  color: var(--azul);
+  line-height: 1.7;
+}
+.quienes-body strong { color: var(--azul); font-weight: 600; }
+
+.cand-header {
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--azul);
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--coral);
+  margin-bottom: 32px;
+}
+.zona-bloque { margin-bottom: 36px; }
+.zona-lbl {
+  font-size: 0.59rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--coral);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.zona-lbl::after { content: ''; flex: 1; height: 1px; background: rgba(0,43,91,0.1); }
+
+.cand-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,43,91,0.07);
+  transition: padding-left .28s var(--ease-out);
+  cursor: default;
+}
+.cand-row:last-child { border-bottom: none; }
+.cand-row:hover { padding-left: 8px; }
+
+.cand-badge {
+  min-width: 32px; height: 32px;
+  background: var(--azul);
+  color: var(--beige);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--t); font-weight: 900; font-size: 0.66rem; letter-spacing: 0.04em;
+  border-radius: 1px; flex-shrink: 0;
+  transition: background .22s;
+}
+.cand-badge.sup { background: rgba(0,43,91,0.16); color: var(--azul); }
+.cand-row:hover .cand-badge { background: var(--coral); color: #fff; }
+.cand-row:hover .cand-badge.sup { background: rgba(255,107,74,0.2); color: var(--coral-dark); }
+
+.cand-rol { font-size: 0.59rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(14,14,14,0.32); font-weight: 600; margin-bottom: 1px; }
+.cand-nombre { font-family: var(--t); font-weight: 800; font-size: 0.96rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--azul); line-height: 1.2; }
+.cand-prof { font-size: 0.74rem; color: rgba(14,14,14,0.42); margin-top: 1px; }
+
+/* ════════════════════════════════════════
+   PROPUESTAS
+════════════════════════════════════════ */
+#propuestas { background: var(--blanco); }
+#propuestas .s-title { color: var(--azul); }
+
+.prop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  outline: 1px solid rgba(0,43,91,0.07);
+}
+.prop-card {
+  padding: 36px 32px;
+  outline: 1px solid rgba(0,43,91,0.07);
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+  cursor: default;
+}
+.prop-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 3px; height: 0;
+  background: var(--coral);
+  transition: height .45s var(--ease-out);
+}
+.prop-card:hover { background: rgba(0,43,91,0.02); }
+.prop-card:hover::before { height: 100%; }
+
+.prop-num {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: 3.4rem;
+  line-height: 1;
+  color: rgba(0,43,91,0.06);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  transition: color .3s;
+}
+.prop-card:hover .prop-num { color: rgba(255,107,74,0.1); }
+.prop-text { font-size: 0.875rem; line-height: 1.76; color: rgba(14,14,14,0.65); }
+.prop-text strong { color: var(--azul); font-weight: 600; }
+
+/* ════════════════════════════════════════
+   CÓMO VOTAR
+════════════════════════════════════════ */
+#votar { background: var(--beige); }
+#votar .s-title { color: var(--azul); }
+
+.votar-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(0,43,91,0.1);
+  margin-bottom: 72px;
+}
+@media (max-width: 860px) { .votar-steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .votar-steps { grid-template-columns: 1fr; } }
+
+.votar-step {
+  padding: 36px 28px;
+  border-right: 1px solid rgba(0,43,91,0.07);
+  transition: background .25s;
+  cursor: default;
+}
+.votar-step:last-child { border-right: none; }
+.votar-step:hover { background: rgba(0,43,91,0.03); }
+
+.step-num {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: 2.5rem;
+  color: rgba(0,43,91,0.1);
+  line-height: 1;
+  margin-bottom: 16px;
+  transition: color .3s;
+}
+.votar-step:hover .step-num { color: rgba(255,107,74,0.25); }
+.step-title { font-family: var(--t); font-weight: 800; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--azul); margin-bottom: 12px; }
+.step-desc { font-size: 0.86rem; line-height: 1.72; color: rgba(14,14,14,0.58); }
+.step-desc strong { color: var(--azul); font-weight: 600; }
+
+.votar-cta {
+  background: var(--azul);
+  padding: 80px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.votar-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,107,74,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,107,74,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.cta-title {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(28px, 4.5vw, 64px);
+  text-transform: uppercase;
+  color: var(--beige);
+  line-height: 1.02;
+  margin-bottom: 36px;
+  position: relative;
+}
+.cta-title .hl { color: var(--coral); }
+.cta-btn {
+  display: inline-block;
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--azul);
+  background: var(--coral);
+  padding: 16px 48px;
+  text-decoration: none;
+  border-radius: 2px;
+  position: relative;
+  transition: background .2s, transform .22s var(--ease-out);
+}
+.cta-btn:hover { background: var(--coral-dark); transform: translateY(-3px); }
+
+/* ════════════════════════════════════════
+   SUMATE
+════════════════════════════════════════ */
+#sumate {
+  background: var(--azul);
+  padding: 108px 52px 0;
+  position: relative;
+  overflow: hidden;
+}
+#sumate::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,107,74,0.4), transparent);
+}
+
+.sumate-big {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(44px, 9vw, 136px);
+  line-height: 0.93;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--beige);
+  margin-bottom: 56px;
+}
+.sumate-big em { color: var(--coral); font-style: normal; }
+
+.sumate-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 72px; }
+
+.s-btn-ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--coral);
+  padding: 14px 32px;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background .2s, transform .2s var(--ease-out);
+}
+.s-btn-ig:hover { background: var(--coral-dark); transform: translateY(-2px); }
+
+.s-btn-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--t);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.65);
+  background: transparent;
+  padding: 14px 32px;
+  text-decoration: none;
+  border: 1.5px solid rgba(232,223,200,0.18);
+  border-radius: 2px;
+  transition: color .2s, border-color .2s, transform .2s var(--ease-out);
+}
+.s-btn-form:hover { color: var(--beige); border-color: rgba(232,223,200,0.45); transform: translateY(-2px); }
+
+.form-section {
+  max-width: 640px;
+  margin: 0 auto 80px;
+}
+.adhesion-card {
+  border: 1px solid rgba(232,223,200,0.12);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.adhesion-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral), rgba(255,107,74,0.3));
+}
+.adhesion-inner {
+  padding: 52px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  background: rgba(255,255,255,0.03);
+}
+.adhesion-eyebrow {
+  font-size: 0.64rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--coral);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.adhesion-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--coral); }
+.adhesion-title {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--beige);
+  line-height: 1;
+}
+.adhesion-title em { color: var(--coral); font-style: normal; }
+.adhesion-desc {
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: rgba(232,223,200,0.5);
+  max-width: 400px;
+}
+.adhesion-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--azul);
+  background: var(--coral);
+  padding: 18px 44px;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background .2s, transform .22s var(--ease-out), gap .2s;
+  position: relative;
+  overflow: hidden;
+}
+.adhesion-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--beige);
+  transform: translateX(-101%);
+  transition: transform .38s var(--ease-out);
+}
+.adhesion-cta span { position: relative; z-index: 1; }
+.adhesion-cta svg { position: relative; z-index: 1; transition: transform .2s var(--ease-out); flex-shrink: 0; }
+.adhesion-cta:hover { color: var(--azul); transform: translateY(-2px); }
+.adhesion-cta:hover::before { transform: translateX(0); }
+.adhesion-cta:hover svg { transform: translateX(4px); }
+.adhesion-note {
+  font-size: 0.72rem;
+  color: rgba(232,223,200,0.22);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.adhesion-note::before {
+  content: '';
+  width: 16px; height: 1px;
+  background: rgba(232,223,200,0.22);
+  flex-shrink: 0;
+}
+@media (max-width: 540px) {
+  .adhesion-inner { padding: 36px 28px; }
+}
+.f-group { margin-bottom: 10px; }
+.f-group input,
+.f-group select {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(232,223,200,0.14);
+  color: var(--beige);
+  padding: 14px 18px;
+  font-family: var(--b);
+  font-size: 0.9rem;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color .25s, background .25s;
+  -webkit-appearance: none;
+}
+.f-group input::placeholder { color: rgba(232,223,200,0.22); }
+.f-group input:focus,
+.f-group select:focus { border-color: var(--coral); background: rgba(255,107,74,0.04); }
+.f-group select { cursor: pointer; color: rgba(232,223,200,0.5); }
+.f-group select option { background: #001530; color: var(--beige); }
+.f-group select.filled { color: var(--beige); }
+
+.f-submit {
+  width: 100%;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  margin-top: 8px;
+  transition: background .2s, transform .2s var(--ease-out);
+}
+.f-submit:hover { background: var(--coral-dark); transform: translateY(-1px); }
+.f-submit:active { transform: none; }
+
+.f-success {
+  display: none;
+  text-align: center;
+  padding: 48px 0;
+}
+.f-success-icon {
+  width: 52px; height: 52px;
+  border: 2px solid var(--coral);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+}
+.f-success p {
+  font-family: var(--t);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+.f-success small {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(232,223,200,0.35);
+  margin-top: 8px;
+  letter-spacing: 0.08em;
+}
+
+footer {
+  background: rgba(0,0,0,0.28);
+  padding: 24px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.footer-mark {
+  font-family: var(--t);
+  font-weight: 900;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232,223,200,0.22);
+}
+.footer-mark em { color: rgba(255,107,74,0.45); font-style: normal; }
+.footer-legal { font-size: 0.66rem; color: rgba(232,223,200,0.16); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ════════════════════════════════════════
+   MOBILE
+════════════════════════════════════════ */
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  nav.scrolled { padding: 13px 24px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .mobile-nav { display: flex; }
+  section { padding: 72px 24px; }
+  .hero-inner { padding: 100px 24px 60px; }
+  .hero-bar { padding: 12px 24px; }
+  .hero-vline, .hero-side, .hero-ghost { display: none; }
+  .votar-cta { padding: 56px 28px; }
+  #sumate { padding: 72px 24px 0; }
+  footer { padding: 20px 24px; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR (desktop) -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- PROGRESS -->
+<div id="progress"></div>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="navbar">
+  <a href="#inicio" class="nav-logo">Movimiento<span>Multisectorial</span></a>
+  <ul class="nav-links">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#quienes">La lista</a></li>
+    <li><a href="#propuestas">Propuestas</a></li>
+    <li><a href="#votar">Cómo votar</a></li>
+    <li><a href="#sumate" class="nav-cta">Sumate</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#inicio"     onclick="closeMob()">Inicio</a>
+  <a href="#quienes"    onclick="closeMob()">La lista</a>
+  <a href="#propuestas" onclick="closeMob()">Propuestas</a>
+  <a href="#votar"      onclick="closeMob()">Cómo votar</a>
+  <a href="#sumate"     onclick="closeMob()">Sumate</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="inicio">
+  <div class="hero-grid"></div>
+  <div class="hero-ghost">CURRAR</div>
+  <div class="hero-vline"></div>
+  <div class="hero-side">Elecciones 15–30 junio 2026 · Caja Arte de Curar · Pcia. Santa Fe</div>
+
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Caja de Seguridad Social · Arte de Curar · Pcia. Santa Fe</p>
+    <h1 class="hero-title">
+      <span class="line"><span>Con tu</span></span>
+      <span class="line"><span>participación,</span></span>
+      <span class="line"><span>otra <span class="currar">Caja</span></span></span>
+      <span class="line"><span>es posible.</span></span>
+    </h1>
+    <div class="hero-tags">
+      <span class="hero-tag">Organización</span>
+      <span class="hero-tag">Transparencia</span>
+      <span class="hero-tag">Participación</span>
+      <span class="hero-tag">Democracia real</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#quienes" class="btn-primary"><span class="btn-txt">Conocé la lista →</span></a>
+      <a href="#propuestas" class="btn-ghost">Ver propuestas</a>
+    </div>
+  </div>
+
+  <div class="hero-bar">
+    <span class="hero-bar-txt">Lista Multisectorial · Elecciones 15–30 junio 2026 · Ley 12818</span>
+    <div class="scroll-hint"><span>Scroll</span><div class="scroll-arrow"></div></div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track" id="mtrack">
+    <span>Transparencia</span><span class="sep">·</span>
+    <span>Democracia Real</span><span class="sep">·</span>
+    <span>Organización</span><span class="sep">·</span>
+    <span>Otra Caja es Posible</span><span class="sep">·</span>
+    <span>Solidaridad Profesional</span><span class="sep">·</span>
+    <span>Participación</span><span class="sep">·</span>
+    <span>Reforma del Sistema</span><span class="sep">·</span>
+  </div>
+</div>
+
+<!-- ══ PROBLEMAS ══ -->
+<section id="problemas">
+  <div class="s-label reveal">El diagnóstico</div>
+  <h2 class="s-title reveal">¿Qué está<br>pasando?</h2>
+  <div class="s-rule reveal" style="margin-bottom:56px"></div>
+
+  <div class="prob-grid">
+    <div class="prob-card reveal">
+      <div class="prob-num">01</div>
+      <svg class="prob-icon" viewBox="0 0 44 44" fill="none" stroke="#FF6B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="22" cy="22" r="17"/><path d="M22 13v11M22 30h.01"/>
+      </svg>
+      <div class="prob-title">Falta de transparencia</div>
+      <p class="prob-desc">Las decisiones se toman sin rendir cuentas a los afiliados. Los números de la Caja no circulan con claridad.</p>
+    </div>
+    <div class="prob-card reveal">
+      <div class="prob-num">02</div>
+      <svg class="prob-icon" viewBox="0 0 44 44" fill="none" stroke="#FF6B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="8" y="10" width="28" height="24" rx="2"/><path d="M8 18h28M15 10v8M29 10v8M14 25h16M14 30h10"/>
+      </svg>
+      <div class="prob-title">Decisiones a puertas cerradas</div>
+      <p class="prob-desc">La conducción no abre los espacios que la institución necesita para funcionar con democracia real y participación genuina.</p>
+    </div>
+    <div class="prob-card reveal">
+      <div class="prob-num">03</div>
+      <svg class="prob-icon" viewBox="0 0 44 44" fill="none" stroke="#FF6B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 8v5M22 31v5M8 22h5M31 22h5"/><circle cx="22" cy="22" r="9"/>
+        <path d="M16 16l3.2 3.2M24.8 24.8 28 28M16 28l3.2-3.2M24.8 19.2 28 16"/>
+      </svg>
+      <div class="prob-title">Prestaciones insuficientes</div>
+      <p class="prob-desc">Magras jubilaciones, embargos, intereses absurdos. El sistema deja afuera a más de la mitad de los aportantes potenciales.</p>
+    </div>
+    <div class="prob-card reveal">
+      <div class="prob-num">04</div>
+      <svg class="prob-icon" viewBox="0 0 44 44" fill="none" stroke="#FF6B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="22" cy="15" r="7"/><path d="M8 38c0-7.732 6.268-14 14-14s14 6.268 14 14"/>
+        <path d="M31 21l6 6M37 21l-6 6"/>
+      </svg>
+      <div class="prob-title">Desconexión con los afiliados</div>
+      <p class="prob-desc">La conducción ignora la realidad de los colegas. La situación es penosa y muchas veces crítica para la gran mayoría.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ QUIÉNES SOMOS ══ -->
+<section id="quienes">
+  <div class="quienes-grid">
+    <div>
+      <div class="s-label reveal left">Quiénes somos</div>
+      <h2 class="s-title reveal left" style="color:var(--azul)">Un movimiento<br>de profesionales.</h2>
+      <div class="s-rule reveal left"></div>
+      <div class="quienes-body">
+        <p class="lead reveal left">La Multisectorial es la expresión de profesionales de toda la provincia convencidos de la necesidad de reformar el sistema de jubilaciones y obra social.</p>
+        <p class="reveal left">Sabemos que este sistema electoral, fiel reflejo de la totalidad del sistema de la Caja, está muy lejos de garantizar la participación democrática de quienes formamos parte de las distintas profesiones involucradas.</p>
+        <p class="reveal left">Hemos decidido en asambleas abiertas participar de estos comicios en el entendimiento de que una parte de la lucha es visibilizar la necesidad de un cambio en la estructura de funcionamiento de la Caja.</p>
+        <p class="reveal left">Un cambio guiado por un verdadero espíritu de solidaridad entre las y los profesionales — tanto entre las distintas disciplinas, como entre quienes aportan con su trabajo y quienes deben acceder a un retiro digno.</p>
+        <p class="reveal left"><strong>Cuidar la Caja y a sus profesionales implica hacerla accesible y equitativa a la mayoría. Eso es responsabilidad de todos y todas.</strong></p>
+      </div>
+    </div>
+
+    <div class="reveal right">
+      <div class="cand-header">Los candidatos</div>
+
+      <div class="zona-bloque">
+        <div class="zona-lbl">Zona Sur — Activos</div>
+        <div class="cand-row">
+          <div class="cand-badge">T</div>
+          <div><div class="cand-rol">Director Titular</div><div class="cand-nombre">Miranda Arféliz</div><div class="cand-prof">Psicóloga · af. 66092</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge sup">S</div>
+          <div><div class="cand-rol">Director Suplente</div><div class="cand-nombre">Ariel Flury</div><div class="cand-prof">Kinesiólogo · af. 57068</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge">T</div>
+          <div><div class="cand-rol">Directora Titular</div><div class="cand-nombre">María Julieta Seveso</div><div class="cand-prof">Médica · af. 32003</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge sup">S</div>
+          <div><div class="cand-rol">Directora Suplente</div><div class="cand-nombre">Mónica Blando</div><div class="cand-prof">Psicóloga · af. 30857</div></div>
+        </div>
+      </div>
+
+      <div class="zona-bloque">
+        <div class="zona-lbl">Zona Norte — Activos</div>
+        <div class="cand-row">
+          <div class="cand-badge">T</div>
+          <div><div class="cand-rol">Director Titular</div><div class="cand-nombre">Ezequiel Gattaz</div><div class="cand-prof">Médico Psiquiatra · af. 69448</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge sup">S</div>
+          <div><div class="cand-rol">Director Suplente</div><div class="cand-nombre">Diana Lazzarotto</div><div class="cand-prof">Psicóloga · af. 45851</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge">T</div>
+          <div><div class="cand-rol">Director Titular</div><div class="cand-nombre">Hugo Garnero</div><div class="cand-prof">Médico · af. 16931</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge sup">S</div>
+          <div><div class="cand-rol">Director Suplente</div><div class="cand-nombre">Virginia Yódice</div><div class="cand-prof">Nutricionista · af. 48700</div></div>
+        </div>
+      </div>
+
+      <div class="zona-bloque">
+        <div class="zona-lbl">Consejo de Representantes — Zona Sur (Activos y Jubilados)</div>
+        <div class="cand-row">
+          <div class="cand-badge">T</div>
+          <div><div class="cand-rol">Miembro Titular · Dist. 10 Caseros</div><div class="cand-nombre">Fernando Apa</div><div class="cand-prof">Médico Veterinario · af. 59255</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge sup">S</div>
+          <div><div class="cand-rol">Miembro Suplente · Dist. 10 Caseros</div><div class="cand-nombre">Adrián Montenovo</div><div class="cand-prof">Médico · af. 22019</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge">T</div>
+          <div><div class="cand-rol">Miembro Titular · Dist. 14 Rosario</div><div class="cand-nombre">Fernando Armas</div><div class="cand-prof">Médico Jub. · af. 20858</div></div>
+        </div>
+        <div class="cand-row">
+          <div class="cand-badge sup">S</div>
+          <div><div class="cand-rol">Miembro Suplente · Dist. 14 Rosario</div><div class="cand-nombre">Graciela Rojas</div><div class="cand-prof">Médica · af. 17688</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROPUESTAS ══ -->
+<section id="propuestas">
+  <div class="s-label reveal">Plataforma programática</div>
+  <h2 class="s-title reveal">Nuestras<br>propuestas.</h2>
+  <div class="s-rule reveal" style="margin-bottom:56px"></div>
+  <div class="prop-grid">
+    <div class="prop-card reveal"><div class="prop-num">01</div><p class="prop-text"><strong>Caja manejada por afiliados.</strong> Democracia real con la Asamblea como órgano máximo. Revisión del reglamento electoral de voto por correo.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">02</div><p class="prop-text"><strong>Aporte jubilatorio obligatorio, obra social opcional</strong> para quienes acrediten otra cobertura. Fondos independientes e intangibles.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">03</div><p class="prop-text"><strong>Derogación de la obligatoriedad</strong> por simple inscripción al Monotributo, que sanciona la precariedad laboral de miles de colegas.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">04</div><p class="prop-text"><strong>Aporte a cualquier sistema estatal</strong> (provincia, municipalidad, universidad, PAMI) libera la obligatoriedad. Principio de reciprocidad.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">05</div><p class="prop-text"><strong>Derogación del sistema por edad biológica.</strong> Aportes regulados según proporcionalidad a los ingresos reales declarados ante AFIP.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">06</div><p class="prop-text"><strong>2% sobre facturación de empresas de salud.</strong> Nuevas formas que tipifiquen aportes patronales sin descargarlos sobre los pacientes.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">07</div><p class="prop-text"><strong>Obra social única igualitaria</strong> para todos, con cumplimiento cabal del PMO como piso prestacional mínimo.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">08</div><p class="prop-text"><strong>Jubilación con 30 años de aportes y 60 de vida</strong> para todos los sexos. Sin obligación de entregar la matrícula para gozar derechos jubilatorios.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">09</div><p class="prop-text"><strong>Jubilación mínima equivalente al costo de la canasta familiar,</strong> con capitalización adicional para quienes hayan aportado más años o más montos.</p></div>
+    <div class="prop-card reveal"><div class="prop-num">10</div><p class="prop-text"><strong>Plan de reinserción para morosos</strong> que condone la deuda de obra social no utilizada y ajuste la deuda jubilatoria a la nueva realidad emergente.</p></div>
+  </div>
+</section>
+
+<!-- ══ CÓMO VOTAR ══ -->
+<section id="votar">
+  <div class="s-label reveal">Participá</div>
+  <h2 class="s-title reveal">Cómo<br>votar.</h2>
+  <div class="s-rule reveal" style="margin-bottom:52px"></div>
+  <div class="votar-steps">
+    <div class="votar-step reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">¿Quién puede votar?</div>
+      <p class="step-desc">Todos los afiliados activos y jubilados de la Caja de Seguridad Social para los Profesionales del Arte de Curar de Santa Fe.</p>
+    </div>
+    <div class="votar-step reveal">
+      <div class="step-num">02</div>
+      <div class="step-title">¿Cuándo?</div>
+      <p class="step-desc">Del <strong>15 al 30 de junio de 2026</strong>. El voto es por correo postal. El sobre debe ser enviado antes del cierre del período.</p>
+    </div>
+    <div class="votar-step reveal">
+      <div class="step-num">03</div>
+      <div class="step-title">¿Qué necesitás?</div>
+      <p class="step-desc">Recibís el sobre y las boletas por correo en tu domicilio registrado en la Caja. Verificá que tus datos estén actualizados.</p>
+    </div>
+    <div class="votar-step reveal">
+      <div class="step-num">04</div>
+      <div class="step-title">¿Cómo participar?</div>
+      <p class="step-desc">Completá la boleta de tu zona (Norte o Sur), introducíla en el sobre oficial y enviála por correo.</p>
+    </div>
+  </div>
+  <div class="votar-cta reveal">
+    <div class="cta-title">Con tu <span class="hl">participación</span><br>otra Caja<br>es posible.</div>
+    <a href="#sumate" class="cta-btn">Sumate al movimiento →</a>
+  </div>
+</section>
+
+<!-- ══ SUMATE ══ -->
+<section id="sumate">
+  <div class="s-label reveal" style="color:rgba(255,107,74,0.8)">Sumate</div>
+  <div class="sumate-big reveal">
+    La Caja<br>es <em>nuestra.</em><br>Defendéla.<br>Transformala.
+  </div>
+  <div class="sumate-btns reveal">
+    <a href="https://instagram.com/movimientomultisectorial" target="_blank" rel="noopener" class="s-btn-ig">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      @movimientomultisectorial
+    </a>
+    <a href="https://forms.gle/FiAYjnEaCNR4Ejrk6" target="_blank" rel="noopener" class="s-btn-form">Dejá tus datos →</a>
+  </div>
+
+  <div class="form-section reveal" id="form-section">
+    <div class="adhesion-card">
+      <div class="adhesion-inner">
+        <div class="adhesion-eyebrow">Adhesión al movimiento</div>
+        <div class="adhesion-title">Dejá tus<br>datos <em>acá.</em></div>
+        <p class="adhesion-desc">Completá el formulario y te sumás a la lista de colegas que apoya la transformación de la Caja. Tarda menos de un minuto.</p>
+        <a href="https://forms.gle/FiAYjnEaCNR4Ejrk6" target="_blank" rel="noopener" class="adhesion-cta">
+          <span>Completar formulario</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+        <div class="adhesion-note">Se abre en una nueva pestaña · Google Forms</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-mark">Movimiento <em>Multisectorial</em> · Caja Arte de Curar · Pcia. Santa Fe</div>
+    <div class="footer-legal">Elecciones 15–30 junio 2026 · Ley 12818</div>
+  </footer>
+</section>
+
+<script>
+/* ── CURSOR (desktop) ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+if (window.matchMedia('(pointer: fine)').matches && cur) {
+  let rx = 0, ry = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+  });
+  (function loop() {
+    rx += (cx - rx) * 0.11;
+    ry += (cy - ry) * 0.11;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cur.style.width = '6px'; cur.style.height = '6px'; ring.style.width = '54px'; ring.style.height = '54px'; });
+    el.addEventListener('mouseleave', () => { cur.style.width = ''; cur.style.height = ''; ring.style.width = ''; ring.style.height = ''; });
+  });
+}
+
+/* ── PROGRESS BAR ── */
+const prog = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  prog.style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+/* ── NAVBAR ── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── HAMBURGER ── */
+const hbg = document.getElementById('hamburger');
+const mob = document.getElementById('mobileNav');
+hbg.addEventListener('click', () => {
+  const open = hbg.classList.toggle('open');
+  mob.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+function closeMob() {
+  hbg.classList.remove('open');
+  mob.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+/* ── REVEAL ON SCROLL ── */
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+
+reveals.forEach(el => {
+  // stagger cards in grids
+  const p = el.parentElement;
+  if (p && (p.classList.contains('prop-grid') || p.classList.contains('prob-grid') || p.classList.contains('votar-steps'))) {
+    const idx = [...p.children].indexOf(el);
+    el.style.transitionDelay = (idx * 65) + 'ms';
+  }
+  obs.observe(el);
+});
+
+/* ── MARQUEE CLONE ── */
+const mt = document.getElementById('mtrack');
+if (mt) mt.innerHTML += mt.innerHTML;
+
+/* ── FORM ── */
+function doSubmit() {
+  const n = document.getElementById('fn').value.trim();
+  const em = document.getElementById('fe').value.trim();
+  const ni = document.getElementById('fn');
+  const ei = document.getElementById('fe');
+  ni.style.borderColor = n ? '' : 'var(--coral)';
+  ei.style.borderColor = em ? '' : 'var(--coral)';
+  if (!n || !em) return;
+  document.getElementById('formWrap').style.display = 'none';
+  const s = document.getElementById('fSuccess');
+  s.style.display = 'block';
+  s.style.opacity = '0';
+  s.style.transform = 'translateY(12px)';
+  s.style.transition = 'opacity .5s, transform .5s';
+  requestAnimationFrame(() => { s.style.opacity = '1'; s.style.transform = 'translateY(0)'; });
+}
+</script>
+</body>
+</html>
